@@ -1,4 +1,4 @@
-import createDecoder from "./decoder.js";
+const createDecoder = require("./decoder.js");
 function dbfHeader(data) {
   var out = {};
   out.lastUpdated = new Date(
