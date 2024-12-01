@@ -83,7 +83,7 @@ function parseRow(buffer, offset, rowHeaders, decoder) {
   return out;
 }
 
-export default function (buffer, encoding) {
+function parser(buffer, encoding) {
   var decoder = createDecoder(encoding);
   var header = dbfHeader(buffer);
   var rowHeaders = dbfRowHeader(buffer, header.headerLen - 1, decoder);
@@ -99,3 +99,5 @@ export default function (buffer, encoding) {
   }
   return out;
 }
+
+module.exports = parser;
