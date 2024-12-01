@@ -1,7 +1,11 @@
-import { createDecoder } from './decoder.js';
+import createDecoder from "./decoder.js";
 function dbfHeader(data) {
   var out = {};
-  out.lastUpdated = new Date(data.getUint8(1) + 1900, data.getUint8(2), data.getUint8(3));
+  out.lastUpdated = new Date(
+    data.getUint8(1) + 1900,
+    data.getUint8(2),
+    data.getUint8(3)
+  );
   out.records = data.getUint32(4, true);
   out.headerLen = data.getUint16(8, true);
   out.recLen = data.getUint16(10, true);
@@ -13,10 +17,17 @@ function dbfRowHeader(data, headerLen, decoder) {
   var offset = 32;
   while (offset < headerLen) {
     out.push({
-      name: decoder(new Uint8Array(data.buffer.slice(data.byteOffset + offset, data.byteOffset + offset + 11))),
+      name: decoder(
+        new Uint8Array(
+          data.buffer.slice(
+            data.byteOffset + offset,
+            data.byteOffset + offset + 11
+          )
+        )
+      ),
       dataType: String.fromCharCode(data.getUint8(offset + 11)),
       len: data.getUint8(offset + 16),
-      decimal: data.getUint8(offset + 17)
+      decimal: data.getUint8(offset + 17),
     });
     if (data.getUint8(offset + 32) === 13) {
       break;
@@ -28,18 +39,27 @@ function dbfRowHeader(data, headerLen, decoder) {
 }
 
 function rowFuncs(buffer, offset, len, type, decoder) {
-  const data = new Uint8Array(buffer.buffer.slice(buffer.byteOffset + offset, buffer.byteOffset + offset + len));
+  const data = new Uint8Array(
+    buffer.buffer.slice(
+      buffer.byteOffset + offset,
+      buffer.byteOffset + offset + len
+    )
+  );
 
   var textData = decoder(data);
   switch (type) {
-    case 'N':
-    case 'F':
-    case 'O':
+    case "N":
+    case "F":
+    case "O":
       return parseFloat(textData, 10);
-    case 'D':
-      return new Date(textData.slice(0, 4), parseInt(textData.slice(4, 6), 10) - 1, textData.slice(6, 8));
-    case 'L':
-      return textData.toLowerCase() === 'y' || textData.toLowerCase() === 't';
+    case "D":
+      return new Date(
+        textData.slice(0, 4),
+        parseInt(textData.slice(4, 6), 10) - 1,
+        textData.slice(6, 8)
+      );
+    case "L":
+      return textData.toLowerCase() === "y" || textData.toLowerCase() === "t";
     default:
       return textData;
   }
@@ -55,7 +75,7 @@ function parseRow(buffer, offset, rowHeaders, decoder) {
     header = rowHeaders[i];
     field = rowFuncs(buffer, offset, header.len, header.dataType, decoder);
     offset += header.len;
-    if (typeof field !== 'undefined') {
+    if (typeof field !== "undefined") {
       out[header.name] = field;
     }
     i++;

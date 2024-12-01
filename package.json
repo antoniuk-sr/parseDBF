@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "description": "The DBF parsing component of shapefile-js",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "jshint index.js && mocha -R spec test/*.test.js"
   },

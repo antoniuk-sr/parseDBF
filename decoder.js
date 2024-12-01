@@ -1,5 +1,5 @@
 var regex = /^(?:ANSI\s)?(\d+)$/m;
-export function createDecoder(encoding, second) {
+function createDecoder(encoding, second) {
   if (!encoding) {
     return browserDecoder;
   }
@@ -8,7 +8,7 @@ export function createDecoder(encoding, second) {
   } catch (e) {
     var match = regex.exec(encoding);
     if (match && !second) {
-      return createDecoder('windows-' + match[1], true);
+      return createDecoder("windows-" + match[1], true);
     } else {
       encoding = undefined;
       return browserDecoder;
@@ -17,9 +17,12 @@ export function createDecoder(encoding, second) {
   return browserDecoder;
   function browserDecoder(buffer) {
     var decoder = new TextDecoder(encoding ? encoding : undefined);
-    var out = decoder.decode(buffer, {
-      stream: true
-    }) + decoder.decode();
-    return out.replace(/\0/g, '').trim();
+    var out =
+      decoder.decode(buffer, {
+        stream: true,
+      }) + decoder.decode();
+    return out.replace(/\0/g, "").trim();
   }
 }
+
+module.exports = createDecoder;
